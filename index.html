@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7efdf">
+<title>GM Focus Headquarters</title>
+<style>
+:root{color-scheme:light;--ink:#302844;--muted:#635871;--paper:#fffaf0;--plum:#513574;--line:#dfd0b9}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);font:16px/1.5 system-ui,sans-serif;background:#f7efdf radial-gradient(#dbcab5 1px,transparent 1px) 0 0/19px 19px}
+main{max-width:1050px;margin:auto;padding:32px 20px 48px}h1,h2{font-family:Georgia,serif;line-height:1.05;margin:0}h1{font-size:clamp(2.4rem,6vw,4.5rem);letter-spacing:-.045em}h2{font-size:2rem}p{margin:.4rem 0}
+header,.section-head,.quest,.actions,.progress-label{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header{flex-wrap:wrap;margin-bottom:20px}.spot{margin-bottom:20px}.spot:empty{display:none}.spot p{white-space:pre-wrap;overflow-wrap:anywhere}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.panel{background:var(--paper);padding:19px;border:1px solid var(--line);border-radius:22px;box-shadow:0 5px 0 #e7d8c4}
+button{font:inherit;font-weight:700;cursor:pointer;border:1px solid transparent;border-radius:12px;background:var(--plum);color:white;padding:8px 13px;min-height:44px}button.secondary{background:#f0e6fa;color:#422b5d;border-color:#dac9e9}button:disabled{background:#e3efdf;color:#35553a;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #8560b4;outline-offset:3px}
+.scene{position:relative;overflow:hidden;isolation:isolate;aspect-ratio:1.35;margin:16px 0;background:repeating-linear-gradient(90deg,#eadcf5 0 24px,#e5d5f0 24px 48px);border:2px solid #c6afd8;border-radius:15px}
+.floor{position:absolute;inset:76% 0 0;background:repeating-linear-gradient(0deg,#cd9f80 0 2px,#dfb596 2px 18px);border-top:6px solid #fbf0dd}
+.window{position:absolute;left:9%;top:15%;width:25%;height:42%;border:7px solid #fff6e8;border-radius:50% 50% 5px 5px/38% 38% 5px 5px;background:linear-gradient(#b8dcf4,#fce2bc);box-shadow:0 3px 0 #b7a3c1;overflow:hidden}.window:before,.window:after{content:"";position:absolute;background:#fff6e8}.window:before{width:5px;height:100%;left:calc(50% - 2px)}.window:after{height:5px;width:100%;top:50%}
+.board{position:absolute;top:13%;left:45%;width:44%;height:41%;border:7px solid #9c664c;border-radius:8px;background:#dcb38a radial-gradient(#ac7955 1px,transparent 1px) 0 0/7px 7px;box-shadow:0 4px 0 #bb99bb}
+.desk{position:absolute;top:66%;left:20%;width:70%;height:7%;background:#ad7152;border-radius:5px;box-shadow:inset 0 4px #e4ab82}.desk:before,.desk:after{content:"";position:absolute;top:100%;width:5%;height:350%;background:#985f47}.desk:before{left:8%}.desk:after{right:8%}
+.book{position:absolute;left:44%;top:61%;width:18%;height:5%;background:#8c72b2;border-bottom:4px solid #fff3dc;border-radius:4px;transform:rotate(-5deg)}.rug{position:absolute;bottom:4%;left:32%;width:45%;height:10%;border-radius:50%;background:#bc80a4;box-shadow:inset 0 0 0 4px #e2aeca}
+.decor{position:absolute;font-size:clamp(18px,5vw,36px);line-height:1;filter:drop-shadow(0 2px 1px #6b426956)}.decor[hidden]{display:none}.star{left:51%;top:23%;transform:rotate(-14deg)}.plant{left:24%;bottom:34%}.moon{left:72%;top:29%;transform:rotate(13deg)}.lamp{right:12%;bottom:34%}.trophy{left:57%;top:36%}
+small,.sub{color:var(--muted)}progress{width:100%;height:13px;accent-color:#7955a0}details{margin-top:8px}summary{cursor:pointer;font-weight:650}.rewards{padding-left:22px;margin-bottom:0}
+.journal{background:linear-gradient(90deg,#f5dfee 0 6px,var(--paper) 6px);padding-left:22px}.quests{display:grid;gap:10px;margin-top:15px}.quest{background:#f8efe5;border:1px solid #eadaca;border-radius:13px;padding:10px}.quest:nth-child(2){background:#f1e9f9}.quest:nth-child(3){background:#edf1e5}.quest-copy{flex:1;min-width:0;overflow-wrap:anywhere}.quest p{font-size:.9rem;margin:0;color:#50455c}.sticker{display:grid;place-items:center;background:#fffaf1;border-radius:9px;min-width:34px;height:34px;transform:rotate(-7deg);box-shadow:0 2px 3px #4b34421f}.quest button{flex-shrink:0}
+dialog{color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:18px;width:min(92vw,480px);padding:20px}dialog::backdrop{background:#30244199}label{display:block;font-weight:650;margin:12px 0 4px}input,textarea{font:inherit;color:inherit;width:100%;padding:9px;border:1px solid #b8a7c5;border-radius:8px;background:white}textarea{resize:vertical}.actions{justify-content:flex-end;margin-top:16px}.notice{color:#74372f}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+@media(max-width:720px){main{padding:20px 12px 34px}.layout{grid-template-columns:1fr}.panel{padding:15px}.journal{padding-left:17px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>GM Focus<br>Headquarters</h1><button id="save-spot">📌 Save My Spot</button></header>
+<section id="spot" class="spot" aria-label="Saved interruption note"></section>
+<p id="notice" class="notice" hidden>Your browser is blocking storage. Changes may disappear when you close this page.</p>
+<div class="layout">
+<section class="panel" aria-labelledby="room-heading">
+<div class="section-head"><h2 id="room-heading">My Room</h2><strong id="xp">0 XP</strong></div>
+<div class="scene" role="img" aria-label="Cozy desk with a window and an empty pinboard">
+<div class="floor"></div><div class="rug"></div><div class="window"></div><div class="board"></div><div class="desk"></div><div class="book"></div>
+<span class="decor star" hidden>🌟</span><span class="decor plant" hidden>🪴</span><span class="decor moon" hidden>🌙</span><span class="decor lamp" hidden>🪔</span><span class="decor trophy" hidden>🏆</span>
+</div>
+<div class="progress-label"><small id="next"></small><small id="count"></small></div>
+<progress id="progress" aria-label="Progress toward the next decoration"></progress>
+<details><summary>Decoration collection</summary><ul class="rewards" id="rewards"></ul></details>
+</section>
+<section class="panel journal" aria-labelledby="journal-heading">
+<div class="section-head"><h2 id="journal-heading">Today</h2><button class="secondary" id="edit">Edit quests</button></div>
+<p class="sub" id="date"></p>
+<div id="quests" class="quests"></div>
+</section>
+</div>
+<p class="sr" id="status" role="status"></p>
+</main>
+<dialog id="spot-dialog" aria-labelledby="spot-title">
+<form id="spot-form"><h2 id="spot-title">Save My Spot</h2>
+<label for="note">Where did you leave off?</label><textarea id="note" rows="3" maxlength="240" required placeholder="Payroll packet → check Thursday’s edits"></textarea>
+<div class="actions"><button type="button" class="secondary" data-close>Cancel</button><button>Save note</button></div></form>
+</dialog>
+<dialog id="edit-dialog" aria-labelledby="edit-title">
+<form id="edit-form"><h2 id="edit-title">Edit quests</h2><div id="edit-fields"></div><div class="actions"><button type="button" class="secondary" data-close>Cancel</button><button>Save quests</button></div></form>
+</dialog>
+<script>
+'use strict';
+const key = 'gm-focus-headquarters-v1:' + location.pathname;
+const starter = [
+  {name:'Fuel Up', description:'Eat something before the rush.', icon:'🥤'},
+  {name:'Back to It', description:'Return to a task after an interruption.', icon:'✨'},
+  {name:'Close the Loop', description:'Write the next step for one unfinished task.', icon:'💌'}
+];
+const rewards = [
+  [10,'Gold star','star'], [30,'Desk plant','plant'], [60,'Moon pin','moon'],
+  [90,'Desk lamp','lamp'], [120,'Focus trophy','trophy']
+];
+const $ = id => document.getElementById(id);
+let state = {quests:starter, days:{}, note:null};
+let storageAvailable = true;
+function read() {
+  if (!storageAvailable) return;
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved) state = JSON.parse(saved);
+  } catch { storageAvailable = false; $('notice').hidden = false; }
+}
+function save() {
+  try { localStorage.setItem(key, JSON.stringify(state)); }
+  catch { storageAvailable = false; $('notice').hidden = false; }
+}
+function dayKey(date = new Date()) {
+  return [date.getFullYear(), date.getMonth()+1, date.getDate()].join('-');
+}
+function element(tag, content, className) {
+  const node = document.createElement(tag);
+  node.textContent = content;
+  if (className) node.className = className;
+  return node;
+}
+function render() {
+  const now = new Date();
+  const today = dayKey(now);
+  const completed = state.days[today] || [];
+  const xp = Object.values(state.days).reduce((total, day) => total + day.length * 10, 0);
+  const unlocked = rewards.filter(([threshold]) => xp >= threshold);
+  const target = rewards[unlocked.length];
+  $('date').textContent = now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  $('xp').textContent = xp + ' XP';
+  $('count').textContent = unlocked.length + ' / 5 unlocked';
+  $('next').textContent = target ? (target[0]-xp) + ' XP to ' + target[1] : 'Collection complete';
+  $('progress').max = target ? target[0] : rewards.at(-1)[0];
+  $('progress').value = xp;
+  const scene = document.querySelector('.scene');
+  scene.setAttribute('aria-label', unlocked.length ? 'Cozy desk with ' + unlocked.map(item => item[1]).join(', ') : 'Cozy desk with a window and an empty pinboard');
+  $('rewards').replaceChildren(...rewards.map(([threshold,name,style]) => {
+    scene.querySelector('.' + style).hidden = xp < threshold;
+    return element('li', name + ' · ' + (xp >= threshold ? 'Unlocked' : threshold + ' XP'));
+  }));
+  $('quests').replaceChildren(...state.quests.map((quest,index) => {
+    const card = element('article','','quest');
+    const icon = element('span',quest.icon,'sticker');
+    icon.setAttribute('aria-hidden','true');
+    const copy = element('div','','quest-copy');
+    copy.append(element('strong',quest.name),element('p',quest.description));
+    const done = completed.includes(index);
+    const button = element('button',done ? '✓ Done' : '+10 XP');
+    button.disabled = done;
+    button.setAttribute('aria-label', (done ? 'Completed ' : 'Complete ') + quest.name + (done ? '' : ' for 10 XP'));
+    button.onclick = () => {
+      read();
+      const day = dayKey();
+      const entries = state.days[day] ||= [];
+      if (entries.includes(index)) return render();
+      const previous = Object.values(state.days).reduce((total, items) => total + items.length * 10, 0);
+      entries.push(index);
+      save();
+      render();
+      const reward = rewards.find(([threshold]) => previous < threshold && threshold <= previous + 10);
+      $('status').textContent = quest.name + ' complete. Earned 10 XP.' + (reward ? ' Unlocked ' + reward[1] + '.' : '');
+    };
+    card.append(icon,copy,button);
+    return card;
+  }));
+  $('spot').replaceChildren();
+  $('spot').className = state.note ? 'spot panel' : 'spot';
+  if (state.note) {
+    const heading = element('strong', state.note.resumed ? '✓ Resumed' : 'Pick up where you left off');
+    const resume = element('button','Resume');
+    resume.onclick = () => {
+      read();
+      if (state.note) state.note.resumed = true;
+      save();
+      render();
+      $('save-spot').focus();
+      $('status').textContent = 'Marked as resumed.';
+    };
+    const bar = element('div','','section-head');
+    bar.append(heading);
+    if (!state.note.resumed) bar.append(resume);
+    $('spot').append(bar,element('p',state.note.text));
+  }
+  renderedDay = today;
+}
+$('save-spot').onclick = () => {
+  $('note').value = state.note && !state.note.resumed ? state.note.text : '';
+  $('spot-dialog').showModal();
+};
+$('spot-form').onsubmit = event => {
+  event.preventDefault();
+  const note = $('note').value.trim();
+  if (!note) return $('note').focus();
+  read();
+  state.note = {text:note,resumed:false};
+  save();
+  $('spot-dialog').close();
+  render();
+};
+$('edit').onclick = () => {
+  $('edit-fields').replaceChildren();
+  state.quests.forEach((quest,index) => {
+    for (const [field,caption,limit] of [['name','Quest name',45],['description','What to do',110]]) {
+      const id = field + index;
+      const label = element('label', 'Quest ' + (index+1) + ' · ' + caption);
+      label.htmlFor = id;
+      const input = element('input','');
+      input.id = id;
+      input.value = quest[field];
+      input.required = true;
+      input.maxLength = limit;
+      $('edit-fields').append(label,input);
+    }
+  });
+  $('edit-dialog').showModal();
+};
+$('edit-form').onsubmit = event => {
+  event.preventDefault();
+  const inputs = [...$('edit-fields').querySelectorAll('input')];
+  const empty = inputs.find(input => !input.value.trim());
+  if (empty) return empty.focus();
+  read();
+  state.quests = state.quests.map((quest,index) => ({
+    ...quest, name:inputs[index*2].value.trim(), description:inputs[index*2+1].value.trim()
+  }));
+  save();
+  $('edit-dialog').close();
+  render();
+};
+document.querySelectorAll('[data-close]').forEach(button => {
+  button.onclick = () => button.closest('dialog').close();
+});
+let renderedDay;
+function refresh() { if (renderedDay !== dayKey()) render(); }
+addEventListener('storage', event => { if (event.key === key) { read(); render(); } });
+document.addEventListener('visibilitychange', refresh);
+setInterval(refresh, 1000);
+read();
+render();
+</script>
+</body>
+</html>
